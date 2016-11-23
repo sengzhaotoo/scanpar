@@ -2,9 +2,6 @@
 #include "stdlib.h"
 #include "string.h"
 
-void printFile(FILE *fp);
-void check(FILE *fp);
-
 void printFile(FILE *fp){
     char c; 
     printf("Beginning of the C file:\n");
@@ -45,14 +42,16 @@ int main(int argc, char *argv[]){
 
     if((fp = fopen(file,"r"))== NULL){
         printf("File does not exist or corrupted.\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     fseek(fp, 0, SEEK_END); // Reset file pointer position -> 0
     if(ftell(fp) == 0){
         printf("File is empty.\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     rewind(fp);
     printFile(fp);
     fclose(fp);
+    exit(EXIT_SUCCESS); 
+    return 0; // Should never reach here
 }
