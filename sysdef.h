@@ -14,7 +14,7 @@ char *keywords[15] = {
 
 char *relationalOperators[] = {"==", "<", ">", "!=", "=>", "=<"};
 
-char otherOperators[6] = {':', '+', '-', '*', '/', '%', '#'};
+char otherOperators[6] = {':', '+', '-', '*', '/', '%'};
 
 char delimiters[9] = {'.', '(', ')', ',', '{', '}', ';', '[', ']'};
 
