@@ -8,7 +8,7 @@
 
 int eligibleChar(char c) {
 	if (c == '.' || c == '(' || c == ')' || c == ',' || c == '{' || c == '}' ||
-		c == ';' || c == '[' || c == ']' || c == '"' || c == '\\' || c == '_' ||
+        c == ';' || c == '[' || c == ']' || c == '"' || c == '\\' || c == '_' ||
 		c == ':' || c == '+' || c == '-' || c == '*' || c == '/' || c == '%' || 
 		c == '=' || c == '<' || c == '>' || c == '!' 
 		|| c == '#') {
@@ -71,6 +71,56 @@ void splitWords() {
 	}
 }
 
+void printOtherOperators() {
+	int i;
+	for (i = 0; i < otherOpi; i++) {
+		printf("%c \t (line #%d) \n", otherOps[i], otherOpLineNums[i]);
+	}
+}
+
+void printDelimiters() {
+	int i;
+	for (i = 0; i < delimi; i++) {
+		printf("%c \t (line #%d) \n", delims[i], delimLineNums[i]);
+	}
+}
+
+void printRelationalOperators() {
+	int i;
+	for (i = 0; i < relOpi; i++) {
+		printf("%s \t (line #%d) \n", relOps[i], relOpLineNums[i]);
+	}
+}
+
+void printWords() {
+	// printf("Num of words = %d \n", wordi);
+	int i;
+	for (i = 0; i < wordi; i++) {
+		printf("%s \t (line #%d) \n", words[i], wordLineNums[i]);
+	}
+}
+
+void printKeywords() {
+	int i;
+	for (i = 0; i < keyi; i++) {
+		printf("%s \t (line #%d) \n", keys[i], keyLineNums[i]);
+	}
+}
+
+void printNumbers() {
+	int i;
+	for (i = 0; i < numi; i++) {
+		printf("%s \t (line #%d) \n", nums[i], numLineNums[i]);
+	}
+}
+
+void printIdentifiers() {
+	int i;
+	for (i = 0; i < ideni; i++) {
+		printf("%s \t (line #%d) \n", idens[i], idenLineNums[i]);
+	}
+}
+
 void printFile(FILE *fp){
     char c;
     printf("Beginning of the C file:\n");
@@ -81,8 +131,39 @@ void printFile(FILE *fp){
     }
     printf("\nEnd Of File\n");
 }
+ 
+ void printSummary() {
+	printf("----------BEGIN SUMMARY---------- \n");
+	
+	printf("***Note format: token (line #) \n\n");
 
-/*  Check if file is invalid -- file type, invalid characters etc */ 
+	printf("Total %d KEYWORDS found are: \n", keyi);
+	printKeywords();
+	printf("***/END KEYWORD SUMMARY*** \n");
+
+	printf("\nTotal %d IDENTIFIERS found are: \n", ideni);
+	printIdentifiers();	
+	printf("***/END IDENTIFIER SUMMARY*** \n");
+
+	printf("\nTotal %d NUMBERS found are: \n", numi);
+	printNumbers();	
+	printf("***/END NUMBER SUMMARY*** \n");
+
+	printf("\nTotal %d DELIMITERS found are: \n", delimi);
+	printDelimiters();	
+	printf("***/END DELIMITER SUMMARY*** \n");
+
+	printf("\nTotal %d RELATIONAL OPERATORS found are: \n", relOpi);
+	printRelationalOperators();	
+	printf("***/END RELATIONAL OPERATOR SUMMARY*** \n");
+
+	printf("\nTotal %d OTHER OPERATORS found are: \n", relOpi);
+	printOtherOperators();	
+	printf("***/END OTHER OPERATOR SUMMARY*** \n");
+
+	printf("\n----------/END SUMMARY----------- \n");
+    }
+
 TokenType getToken(FILE *fp){
     int lineNum = 1, // line number 
         ccount = 0, // character count for per word (greedy)
@@ -91,7 +172,7 @@ TokenType getToken(FILE *fp){
     char c, temp[MAX];
 
     while((c = fgetc(fp)) != EOF){
-        // Initial Check 
+        // Initial check if file is invalid -- file type, invalid characters etc 
         if(check == 0){
             // New line 
             if(c == '\n'){
