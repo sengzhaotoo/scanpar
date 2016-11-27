@@ -157,7 +157,7 @@ void printFile(FILE *fp){
 	printRelationalOperators();	
 	printf("***/END RELATIONAL OPERATOR SUMMARY*** \n");
 
-	printf("\nTotal %d OTHER OPERATORS found are: \n", relOpi);
+	printf("\nTotal %d OTHER OPERATORS found are: \n", otherOpi);
 	printOtherOperators();	
 	printf("***/END OTHER OPERATOR SUMMARY*** \n");
 
@@ -203,9 +203,9 @@ TokenType getToken(FILE *fp){
                 exit(EXIT_FAILURE);
             }
             check = 1; // check bit is true now -- initial check completed
-            printFile(fp);
+            // printFile(fp);
         } else if (check == 1) {
-            lineNum = 1; 
+            lineNum = 1;
             while ((c = fgetc(fp)) != EOF) {
                 if (c == '\n') {
                     lineNum++;
@@ -291,9 +291,9 @@ TokenType getToken(FILE *fp){
             exit(EXIT_FAILURE);
         }
     }
-    rewind(fp);
     splitWords();
     printSummary();
+    rewind(fp);
     return EOT; // return token
 }
 

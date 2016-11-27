@@ -1,6 +1,6 @@
 #define SYSDEF_H 
 
-char *keywords[32] = {
+char *keywords[34] = {
     "auto", "double", "int", "struct", 
     "break", "else", "long", "switch",
     "case", "enum", "register", "typedef",
@@ -8,7 +8,8 @@ char *keywords[32] = {
     "const", "float", "short", "unsigned",
     "continue", "for", "signed", "void",
     "default", "goto", "sizeof", "volatile",
-    "do", "if", "static", "while"
+    "do", "if", "static", "while", 
+    "include", "malloc"
 };	
 
 char *relationalOperators[] = {"==", "<", ">", "!=", "=>", "=<"};
