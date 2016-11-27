@@ -1,3 +1,6 @@
+#define MAX 16 
+#define LIMIT 200
+
 typedef enum {
     IDENTIFIER,
 	KEYWORD,
@@ -9,12 +12,8 @@ typedef enum {
 	EOT 		// end of token
 } TokenType;
 
-
 typedef struct {
     TokenType ttype;
     char *instance;
     int lineNum;  
 } Token;
-
-#define MAX 16 
-#define LIMIT 200

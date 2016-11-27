@@ -1,6 +1,10 @@
-void check(FILE *fp);
+TokenType getToken (FILE *fp);
 
-int eligibleChar(char c);
+int eligibleChar(char);
+int eligibleDelimiter(char);
+int eligibleOp(char);
+int eligibleRelationalOp(char);
+int eligibleKeyword(char *);
 
 void printFile(FILE *fp);
 void printOperators();
