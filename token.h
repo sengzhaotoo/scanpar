@@ -15,3 +15,6 @@ typedef struct {
     char *instance;
     int lineNum;  
 } Token;
+
+#define MAX 16 
+#define LIMIT 200
