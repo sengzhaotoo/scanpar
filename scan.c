@@ -292,6 +292,8 @@ TokenType getToken(FILE *fp){
         }
     }
     rewind(fp);
+    splitWords();
+    printSummary();
     return EOT; // return token
 }
 
