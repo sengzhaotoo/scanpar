@@ -5,14 +5,14 @@ int main(int argc, char *argv[]){
     int *test = malloc(sizeof(int)); 
     int i = 0;
 
-    while(i < 10){
+    while(i<10){
         test[i] = i;
         i++;
     }
 
-    test[0] = 100 # ; // explicit change  
+    test[0] = 100; // explicit change  
 
-    for(int i = 0; i < 10; i++){
+    for(int i = 0; i<10; i++){
         printf("test[%d]: %d\n", i, test[i]);
     }
     free(test);

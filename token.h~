@@ -1,6 +1,5 @@
 #define MAX 16 
 #define LIMIT 200
-#define MAXTOKS 20
 
 typedef enum {
     IDENTIFIER,
