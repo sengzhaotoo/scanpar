@@ -9,4 +9,6 @@ int eligibleKeyword(char *);
 void printFile(FILE *fp);
 void printOperators();
 void printIdentifiers(); 
+void printLinePositions();
 void printToken(Token *token);
+void printSummary();
