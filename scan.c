@@ -48,7 +48,7 @@ int eligibleDelimiter(char c) {
 int eligibleKeyword(char *str) {
 	int i;
 	int result = 0; // false
-	for (i = 0; i < 15; i++) {
+	for (i = 0; i < 34; i++) {
 		if (!strcasecmp(keywords[i], str))
 			result = 1;
 	}
@@ -165,9 +165,9 @@ void printFile(FILE *fp){
     }
 
 TokenType getToken(FILE *fp){
-    int lineNum = 1, // line number 
-        ccount = 0, // character count for per word (greedy)
-        valid = 1, // valid bit is true by default
+  int lineNum = 1, // line number 
+      ccount = 0, // character count for per word (greedy)
+      valid = 1; // valid bit is true by default
  	//       check = 0; // check bit is false by default   
     char c, temp[MAX];
 
