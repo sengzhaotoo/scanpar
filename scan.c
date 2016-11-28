@@ -168,12 +168,11 @@ TokenType getToken(FILE *fp){
     int lineNum = 1, // line number 
         ccount = 0, // character count for per word (greedy)
         valid = 1, // valid bit is true by default
-        check = 0; // check bit is false by default   
+ 	//       check = 0; // check bit is false by default   
     char c, temp[MAX];
 
     while((c = fgetc(fp)) != EOF){
         // Initial check if file is invalid -- file type, invalid characters etc 
-        if(check == 0){
             // New line 
             if(c == '\n'){
                 lineNum++; 
@@ -188,109 +187,105 @@ TokenType getToken(FILE *fp){
             }
 
             // Check for number, characters, operators, space 
-            if(isalnum(c)){
+            if(isalnum(c)){ //Check if c is alphanumeric
                 temp[ccount] = c; // this does not handle array-out-of-bound 
                 ccount++;
                 if(ccount > MAX){
                     printf("Word '%s' on line %d is too long (>= 16 characters).\n", temp, lineNum);
                     exit(EXIT_FAILURE);
                 }
-            } else if (isspace(c) || eligibleChar(c)) {
+            } else if (isspace(c) || eligibleChar(c)) { //Check if c is a space or a symbol
                 ccount = 0;
             } else {
                 printf("Invalid character '%c' at line %d.\n", c, lineNum);
                 valid = 0;
                 exit(EXIT_FAILURE);
             }
-            check = 1; // check bit is true now -- initial check completed
-            // printFile(fp);
-        } else if (check == 1) {
-            lineNum = 1;
-            while ((c = fgetc(fp)) != EOF) {
-                if (c == '\n') {
-                    lineNum++;
-                }
+    } //End of initial check
 
-                // Ignore comment starting with // to the end of line
-                if (c == '/') {
-                    if (fgetc(fp) == '/') {
-                        while ((c = fgetc(fp)) != '\n') {}
-                        lineNum++;
-                    } else
-                        fseek(fp, -1, SEEK_CUR);
-                }
-
-                if (isalpha(c)) {
-                    words[wordi][wordj++] = c;	
-                    while (isalpha(c = fgetc(fp))) {
-                        words[wordi][wordj++] = c;	
-                    }
-                    words[wordi][wordj] = '\0';	
-                    wordLineNums[wordi] = lineNum;
-                    wordi++; wordj = 0;	
-                    fseek(fp, -1, SEEK_CUR);
-                } 
-
-                else if (isdigit(c)) {
-                    nums[numi][numj++] = c;
-                    while (isdigit(c = fgetc(fp))) {
-                        nums[numi][numj++] = c;
-                    }
-                    nums[numi][numj] = '\0';
-                    numLineNums[numi] = lineNum;
-                    numi++; numj = 0;
-                    fseek(fp, -1, SEEK_CUR);
-                }
-
-                else if (ispunct(c)) {
-                    if (eligibleDelimiter(c)) {
-                        delims[delimi] = c;
-                        delimLineNums[delimi] = lineNum;
-                        delimi++;
-                    } 
-                    else if (eligibleOp(c)) {
-                        otherOps[otherOpi] = c;
-                        otherOpLineNums[otherOpi] = lineNum;
-                        otherOpi++;
-                    }
-                    else if (eligibleRelationalOp(c)) {
-                        if (c == '<' || c == '>') {
-                            relOps[relOpi][relOpj++] = c;
-                            relOps[relOpi][relOpj] = '\0';
-                            relOpLineNums[relOpi] = lineNum;
-                            relOpi++; relOpj = 0;
-                        }
-                        else if (c == '=') {
-                            if ((c = fgetc(fp)) == '=' || c == '>' || c == '<') {
-                                relOps[relOpi][relOpj++] = '=';	
-                                relOps[relOpi][relOpj++] = c;	
-                                relOps[relOpi][relOpj] = '\0';
-                                relOpLineNums[relOpi] = lineNum;
-                                relOpi++; relOpj = 0;
-                            } else if (c == '!') {
-                                if ((c = fgetc(fp)) == '=') {
-                                    relOps[relOpi][relOpj++] = '=';
-                                    relOps[relOpi][relOpj++] = '!';
-                                    relOps[relOpi][relOpj++] = c;	
-                                    relOps[relOpi][relOpj] = '\0';
-                                    relOpLineNums[relOpi] = lineNum;
-                                    relOpi++; relOpj = 0;
-                                } else {
-                                    fseek(fp, -1, SEEK_CUR);
-                                }
-                            } else {
-                                fseek(fp, -1, SEEK_CUR);
-                            }
-                    
-                        }
-                    }
-                }
-            } // end while            
-        } else {
-            printf("Unexpected error, exiting...!");
-            exit(EXIT_FAILURE);
-        }
-    }
+    rewind(fp); //rewind the file pointer so we can go through the file again
+    lineNum = 1; //reset the lineNum
+    
+    while((c = fgetc(fp)) != EOF){ // Second scan of file
+      if (c == '\n') {
+	lineNum++;
+      }
+      
+      // Ignore comment starting with // to the end of line
+      if (c == '/') {
+	if (fgetc(fp) == '/') {
+	  while ((c = fgetc(fp)) != '\n') {}
+	  lineNum++;
+	} else
+	  fseek(fp, -1, SEEK_CUR);
+      }
+      
+      if (isalpha(c)) { // Check if c is alphnumeric
+	words[wordi][wordj++] = c;	
+	while (isalpha(c = fgetc(fp))) { //continue seeking and adding to this word until a non-alpha character is reached
+	  words[wordi][wordj++] = c;	
+	}
+	words[wordi][wordj] = '\0';	
+	wordLineNums[wordi] = lineNum;
+	wordi++; wordj = 0;	
+	fseek(fp, -1, SEEK_CUR); //rewind one so we rescan the non-alpha character the scanner encountered
+      } 
+      
+      else if (isdigit(c)) {
+	nums[numi][numj++] = c;
+	while (isdigit(c = fgetc(fp))) { //continue seeking and adding to this number until a non-numeric character is reached
+	  nums[numi][numj++] = c;
+	}
+	nums[numi][numj] = '\0';
+	numLineNums[numi] = lineNum;
+	numi++; numj = 0;
+	fseek(fp, -1, SEEK_CUR); //rewind one so we rescan the non-numeric character the scanner encountered
+      }
+      
+      else if (ispunct(c)) {
+	if (eligibleDelimiter(c)) { //'.', '(', ')', ',', '{', '}', ';', '[', ']'
+	  delims[delimi] = c;
+	  delimLineNums[delimi] = lineNum;
+	  delimi++;
+	} 
+	else if (eligibleOp(c)) { //':', '+', '-', '*', '/', '%'
+	  otherOps[otherOpi] = c;
+	  otherOpLineNums[otherOpi] = lineNum;
+	  otherOpi++;
+	}
+	else if (eligibleRelationalOp(c)) { //"==", "<", ">", "!=", "=>", "=<"
+	  if (c == '<' || c == '>') {
+	    relOps[relOpi][relOpj++] = c;
+	    relOps[relOpi][relOpj] = '\0';
+	    relOpLineNums[relOpi] = lineNum;
+	    relOpi++; relOpj = 0;
+	  }
+	  else if (c == '=') {
+	    if ((c = fgetc(fp)) == '=' || c == '>' || c == '<') {
+	      relOps[relOpi][relOpj++] = '=';	
+	      relOps[relOpi][relOpj++] = c;	
+	      relOps[relOpi][relOpj] = '\0';
+	      relOpLineNums[relOpi] = lineNum;
+	      relOpi++; relOpj = 0;
+	    } else if (c == '!') {
+	      if ((c = fgetc(fp)) == '=') {
+		relOps[relOpi][relOpj++] = '=';
+		relOps[relOpi][relOpj++] = '!';
+		relOps[relOpi][relOpj++] = c;	
+		relOps[relOpi][relOpj] = '\0';
+		relOpLineNums[relOpi] = lineNum;
+		relOpi++; relOpj = 0;
+	      } else {
+		fseek(fp, -1, SEEK_CUR);
+	      }
+	    } else {
+	      fseek(fp, -1, SEEK_CUR);
+	    }
+            
+	  }
+	}
+      }
+    } // end while            
     splitWords();
     printSummary();
     rewind(fp);
