@@ -11,26 +11,43 @@
 
 typedef char* string;
 
-typedef struct identifier{
+typedef enum{
+  equals
+} assignment;
+
+typedef enum{
+  plus,
+  minus,
+  divided_by,
+  times
+} operator;
+
+typedef enum{
+  Int, 
+  Float
+} type;
+
+struct identifier{
   string name;
-} id;
+  type t;
+};
 
-typedef struct term{
+struct term{
   string literal;
-} t;
+  type t;
+};
 
-typedef struct expression{
-  t term1;
-  string op;
-  t term2;
-} exp;
+struct operation{
+  operator op;
+  struct term *term1;
+  struct term *term2;
+};
 
-typedef struct assignment{
-  id id_node;
-  string equal;
-  exp exp_node;
-  string end;
-} assn;
+struct equality{
+  assignment eq;
+  struct identifier *id;
+  struct operation *op;
+};
 
 // Function Prototypes
 int isAssignment(string *arr);
@@ -39,26 +56,16 @@ int isExpression(string *arr);
 
 int isOp(string operator);
 
+struct equality* newEquality(string *arr);
+
 // Main Function
 int main(int argc, string argv[]){
   
-  /*
+  
   string array[6] = {"a", "=", "1", "+", "2", ";"}; // Example input 
+  newEquality(array);
 
-  if (isAssignment(array)){      
-  assn test;
-  test.equal = "=";
-  test.end = ";"; 
-  test.id_node.name = array[0];  
-    if (isExpression(array)){
-      test.exp_node.term1.literal = array[2];
-      test.exp_node.op = array[3];  
-      test.exp_node.term2.literal = array[4];
-    }
- }
- */
 }
-
 
 //Function definitions
 
@@ -72,4 +79,11 @@ int isExpression(char **arr){
 
 int isOp(string operator){
   return operator == "+" || operator == "-" || operator == "*" || operator == "/";
+}
+
+struct equality* newEquality(string *arr){
+  struct equality* eq_node = malloc(sizeof(struct equality)); 
+  eq_node->eq = equals; 
+ // struct identifier i;
+ // struct operation p;
 }
