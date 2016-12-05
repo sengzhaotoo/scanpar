@@ -7,11 +7,7 @@ typedef struct variable{
   char *name;
   char *type;
 } variable;
-  
-typedef struct assignmentToLiteral{
-  char *id;
-  variable *rightside;
-} assignmentToLiteral;
+
 
 typedef struct binary{
   char *op;
@@ -19,11 +15,40 @@ typedef struct binary{
   char *rightTerm;
 } binary;
 
+typedef struct binaryToBinary{
+  char *op;
+  char *leftTerm;
+  binary *rightside;
+} binaryToBinary;
+
+  
+typedef struct assignmentToLiteral{
+  char *id;
+  variable *rightside;
+} assignmentToLiteral;
+
 typedef struct assignmentToBinary{
   char *id;
   binary *rightside;
 } assignmentToBinary;
 
+typedef struct assignmentToBinaries{
+  char *id;
+  binaryToBinary *rightside;
+} assignmentToBinaries;
+/*
+typedef struct assignmentToBinariesRec{
+  char *id;
+  binaryToBinaries *rightside;
+} assignmentToBinariesRec;
+*/
+
+/*typedef struct binaryToBinaries{
+  char *op;
+  char *leftTerm;
+  binaryToBinary *rightside;
+} binaryToBinaries;
+*/
 
 
 
@@ -95,9 +120,10 @@ void parse(char *lineData[LIMIT][MAXTOKS], int tokensInLine[LIMIT], int lineNumG
 struct assignmentToLiteral* newAssignmentToLiteral(string *arr);
 struct variable* newVariable(string *arr);
 struct assignmentToBinary* newAssignmentToBinary(string *arr, int til);
+struct assignmentToBinaries* newAssignmentToBinaries(string *arr, int til);
 
 struct binary* newBinary(string *arr, int til);
-
+struct binaryToBinary* newBinaryToBinary(string *arr, int til, int opsUsed);
 //struct expression* newExpression(string *arr);
 struct identifier* newIdentifier(string *arr);
 //struct operation* newOperation(string *arr);

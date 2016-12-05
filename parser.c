@@ -7,7 +7,7 @@
 #include "parse.h"
 
 void parse(char *lineData[LIMIT][MAXTOKS], int tokensInLine[LIMIT], int lineNumGlobal){
-  int k = 0, i = 0, ideni = 0;
+  int k = 0, i = 0, ideni = 0, b = 0;
   //this was for debugging purposes:
   //printf("lng = %d\n", lineNumGlobal);
   //for (k = 1; k < lineNumGlobal; k++){
@@ -36,13 +36,18 @@ void parse(char *lineData[LIMIT][MAXTOKS], int tokensInLine[LIMIT], int lineNumG
  
       if (isAssignment(thisLine)){
 	printf("assignment\n");
-	if (isExpression(thisLine, tokensInLine[k])){
+	if ((b = isBinary(thisLine, tokensInLine[k])) == 1){
 	  printf("expression\n");
-	  struct assignmentToBinary* assToB = malloc(sizeof(struct assignmentToBinary));
-	  assToB = newAssignmentToBinary(thisLine, tokensInLine[k]);
-	  printf("id = %s\n op = %s\n leftT = %s\n rightT = %s\n", assToB->id, assToB->rightside->op, assToB->rightside->leftTerm, assToB->rightside->rightTerm);
-	}else{
-	  printf("identifiers\n");
+	  struct assignmentToBinary* aToB = malloc(sizeof(struct assignmentToBinary));
+	  aToB = newAssignmentToBinary(thisLine, tokensInLine[k]);
+	  printf("id = %s\n op = %s\n leftT = %s\n rightT = %s\n", aToB->id, aToB->rightside->op, aToB->rightside->leftTerm, aToB->rightside->rightTerm);
+	}else if(b >= 2){
+	  printf("multiple binaries\n");
+	  struct assignmentToBinaries* aToBs = malloc(sizeof(struct assignmentToBinaries));
+	  aToBs = newAssignmentToBinaries(thisLine, tokensInLine[k]);
+	  printf("id = %s\n op = %s\n leftT = %s\n rightside =\n  op = %s\n  leftT = %s\n,  rightT = %s\n", aToBs->id, aToBs->rightside->op, aToBs->rightside->leftTerm, aToBs->rightside->rightside->op, aToBs->rightside->rightside->leftTerm, aToBs->rightside->rightside->rightTerm);
+
+	  //struct assignmentToBinaries* aToBs
 	  //identifiers[ideni++] = newIdentifier(thisLine);
 	  //printf("identifier %d = %s\n", ideni, identifiers[ideni-1]->name);
 	}
@@ -83,14 +88,14 @@ int isAssignment(char **arr){
   return 0;
 }
 
-int isExpression(char **arr, int til){
-  int i = 0;
+int isBinary(char **arr, int til){
+  int i = 0, numOfB = 0;
   for(i = 3; i < til; i++){
     if(isOp(arr[i])){
-      return 1;
+       numOfB += 1;
     }
   }
-  return 0;
+  return numOfB;
 }
 
 int isOp(string operator){
@@ -134,25 +139,63 @@ struct assignmentToLiteral* newAssignmentToLiteral(string *arr) {
 }
 
 struct assignmentToBinary* newAssignmentToBinary(string *arr, int til) {
-  struct assignmentToBinary* ass_node = malloc(sizeof(struct assignmentToBinary));
-  ass_node->id = arr[0];
-  ass_node->rightside = newBinary(arr, til); //arr + 2 to skip "id =" 
+  struct assignmentToBinary* aToB = malloc(sizeof(struct assignmentToBinary));
+  aToB->id = arr[0];
+  aToB->rightside = newBinary(arr, til); //arr + 2 to skip "id =" 
   //part of "id = 1 + x;", til - 2 to not check "x;" for operator, as the 
   //operator CANNOT be one of the last two things on the line or you're 
   //missing a semicolon. 
-  return ass_node;
+  return aToB;
+}
+
+struct assignmentToBinaries* newAssignmentToBinaries(string *arr, int til) {
+  struct assignmentToBinaries* aToBs = malloc(sizeof(struct assignmentToBinaries));
+  aToBs->id = arr[0];
+  aToBs->rightside = newBinaryToBinary(arr, til, 0); //arr + 2 to skip "id =" 
+  //part of "id = 1 + x;", til - 2 to not check "x;" for operator, as the 
+  //operator CANNOT be one of the last two things on the line or you're 
+  //missing a semicolon. 
+  return aToBs;
 }
 
 struct binary* newBinary(string *arr, int til) {
   struct binary* bi_node = malloc(sizeof(struct binary));
   int i = 0;
-  for(i = 2; i < til - 2; i++){
+  for(i = til - 2; i > 2; i--){ //starts at the end of the array to support binarytobinary
     if(isOp(arr[i])){
       bi_node->op = arr[i];
       bi_node->leftTerm = arr[i - 1];
       bi_node->rightTerm = arr[i + 1];
     }
   }
+  return bi_node;
+}
+
+struct binaryToBinary* newBinaryToBinary(string *arr, int til, int opsUsed) {
+  struct binaryToBinary* bi_node = malloc(sizeof(struct binaryToBinary));
+  int i = 0, ops[20], numOfOps = 0;
+  for(i = 2; i < til - 2; i++){
+    if(isOp(arr[i])){
+      numOfOps++;
+      if(numOfOps > opsUsed)
+	ops[numOfOps - opsUsed - 1] = i;
+    }
+  }
+
+  bi_node->op = arr[ops[0]];
+  bi_node->leftTerm = arr[ops[0] - 1];
+
+  if ((numOfOps - opsUsed) > 1){
+    //    for(i=0; i<(numOfOps - opsUsed); i++) {
+    bi_node->rightside = newBinary(arr, til);
+    //}
+  } /*else {  
+    struct binaryToBinary* new_node = malloc(sizeof(struct binaryToBinary));
+    bi_node->rightside = new_node;
+    bi_node->rightside->leftTerm = arr[ops[0] + 1];
+    bi_node->rightside->op = '\0';
+    bi_node->rightside->rightside = '\0';
+    }*/
   return bi_node;
 }
 
