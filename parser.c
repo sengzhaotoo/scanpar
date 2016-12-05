@@ -21,15 +21,20 @@ void parse(char *lineData[LIMIT][MAXTOKS], int tokensInLine[LIMIT], int lineNumG
 
   printf("Begin Parsing\n");
   char *thisLine[MAXTOKS];
+  thisLine[0] = lineData[8][0];
+  thisLine[1] = lineData[8][1];
+  printf("equality = %d\n", strcmp(thisLine[0], "="));
+  printf("equality = %d\n", strcmp(thisLine[1], "="));
   for (k = 1; k < lineNumGlobal; k++){
     if(tokensInLine[k] > 3) {
       //printf("tokens in line %d = %d\n",k, tokensInLine[k]);
-      printf("thisLine = {");
+      //printf("thisLine = {");
       for (i = 0; i < tokensInLine[k]; i++){
 	thisLine[i] = lineData[k][i];
-	printf("\"%s\", ", thisLine[i]);
+	//	printf("\"%s\", ", thisLine[i]);
+
       }
-      printf("}\n");
+      //printf("}\n");
       //Right now, this line /should/ probably have the same format as your array[6] did I THINK. But isAssignment
       //etc aren't functioning / printing these debugging statements. At least line 8 in test.c should be an assignment!
       if (isAssignment(thisLine)){
@@ -86,11 +91,14 @@ void parse(char *lineData[LIMIT][MAXTOKS], int tokensInLine[LIMIT], int lineNumG
 //Function definitions
 
 int isArray(char **arr){
-  return arr[1] == "[" && arr[3] == "]";
+  return (!strcmp(arr[1], "[") && !strcmp(arr[3], "]"));
 }
 
 int isAssignment(char **arr){
-  return arr[1] == "=" || arr[4] == "=";
+  if(!strcmp(arr[1], "=")){
+    return 1;
+  }
+  return 0;
 }
 
 int isExpression(char **arr){
