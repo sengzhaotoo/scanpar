@@ -5,22 +5,31 @@ C-like scanner and parser that takes in C file and analyses the file itself.
 Right now, I am just using gcc scan.c parser.c, as I can't figure out how to make the Makefile do it right
 
 gcc scan.c parser.c
+### [Updated] Make   
+```
+gcc scan.c parser.c
+```
 
-//OLD
+### [Old] Make
 ``` 
 make 
 ```
-### Run  
 
+
+
+### [Updated] Run   
+#### Parser Only
+```
 ./a.out test.c
-to run JUST the scanner
+```
 
+#### Parser & Scanner 
+```
 ./a.out test.c y
-to run the PARSER AND the SCANNER
+``` 
+The 'y' refers to yes for parsing. 
 
-'y' just for like yes I want to parse too please n thank you
-
-//OLD
+### [Old] Run   
 ```
 ./scan [insert file name with extensions] 
 ./scan test.c
