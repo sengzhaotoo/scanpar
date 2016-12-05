@@ -53,9 +53,22 @@ void parse(char *lineData[LIMIT][MAXTOKS], int tokensInLine[LIMIT], int lineNumG
 	}
       }
       else if (isConditional(thisLine)){
-	//newConditional(thisLine);
-	printf("conditional\n");
-	}
+        printf("conditional\n");
+        struct conditional* cond = malloc(sizeof(struct conditional));
+        char *nextLine[MAXTOKS];
+        
+        // This takes in the next line of data 
+        for (i = 0; i < tokensInLine[k+1]; i++){
+          nextLine[i] = lineData[k+1][i];
+        }
+
+        cond = newConditional(thisLine, tokensInLine[k], nextLine);
+        if(cond == 1){ // if statement  
+          
+        } else if (cond == 2){ // else statement 
+
+        }
+}
     }
   }
 
@@ -105,8 +118,14 @@ int isOp(string operator){
   return 0;
 }
 
-int isConditional(char **arr){
-  return arr[0] == "if";
+int isConditional(char **arr, int til){ 
+  if(!strcmp(arr[0],"if") && !strcmp(arr[til], "{")){ // check line start with if and end with {
+    return 1; 
+  }
+  if(!strcmp(arr[0],"else") && !strcmp(arr[til], "{")){ // check line start with else and end with {
+    return 2; 
+  }
+  return 0; // false 
 }
 /*
 struct expression* newExpression(string *arr){
@@ -199,6 +218,23 @@ struct binaryToBinary* newBinaryToBinary(string *arr, int til, int opsUsed) {
   return bi_node;
 }
 
+struct conditional* newConditional(string *arr, int til, string *arrNext) {
+  struct conditional* cond_node = malloc(sizeof(struct conditional));
+  int i = 0;
+  // if statement 
+  if(isConditional(arr[0]) == 1){
+    if(strcmp(arr[1],"(") && strcmp(arr[til-1],")")) {
+      for(i = 2; i < til-2; i++){ // This grabs everything in between the ()
+        cond_node->ifs.condition = arr[i];
+      }
+      cond_node->ifs.cdtlStatement = newAssignmentToLiteral(arrNext);
+    }
+  } else if (isConditional(arr[0]) == 2){ // else statement
+    cond_node->ifs.elses.condition = NULL;
+    cond_node->ifs.cdtlStatement = newAssignmentToLiteral(arrNext);
+  }
+  return cond_node;
+}
 
 /*
 struct operation* newOperation(string *arr){
