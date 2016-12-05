@@ -5,10 +5,6 @@
 
 #include "token.h"
 #include "sysdef.h"
-#include "scan.h"
-#include "parse.h"
-
-int tokensInLineScan[LIMIT];
 
 int eligibleChar(char c) {
 	if (c == '.' || c == '(' || c == ')' || c == ',' || c == '{' || c == '}' ||
@@ -32,8 +28,7 @@ int eligibleRelationalOp(char c) {
 int eligibleOp(char c) {
 	 int i;
 	 int result = 0; // false
-	 int length = sizeof(otherOperators) / sizeof(otherOperators[0]);
-	 for (i = 0; i < length; i++) {
+	 for (i = 0; i < 8; i++) {
 		if (otherOperators[i] == c) 
 			result = 1;
 	 }
@@ -43,8 +38,7 @@ int eligibleOp(char c) {
 int eligibleDelimiter(char c) {
 	 int i;
 	 int result = 0; // false
-	 int length = sizeof(delimiters) / sizeof(delimiters[0]);
-	 for (i = 0; i < length; i++) {
+	 for (i = 0; i < 9; i++) {
 		if (delimiters[i] == c) 
 			result = 1;
 	 }
@@ -81,14 +75,14 @@ void splitWords() {
 void printOtherOperators() {
 	int i;
 	for (i = 0; i < otherOpi; i++) {
-		printf("%s \t (line #%d) \n", otherOps[i], otherOpLineNums[i]);
+		printf("%c \t (line #%d) \n", otherOps[i], otherOpLineNums[i]);
 	}
 }
 
 void printDelimiters() {
 	int i;
 	for (i = 0; i < delimi; i++) {
-		printf("%s \t (line #%d) \n", delims[i], delimLineNums[i]);
+		printf("%c \t (line #%d) \n", delims[i], delimLineNums[i]);
 	}
 }
 
@@ -183,7 +177,6 @@ void printLinePositions() {
 	printf("\n----------/BEGIN LINE POSITION PRINTOUT----------- \n");
 	//printf("LNG: %d || tIL = %d || linePositions[1][1] = %s\n", lineNumGlobal, tokensInLine[1], (char *)linePositions[1][1]); 
 	printLinePositions();
-	printf("\n----------/END LINE POSITION PRINTOUT----------- \n");
     }
 
 TokenType getToken(FILE *fp){
@@ -234,7 +227,6 @@ TokenType getToken(FILE *fp){
 	//linePositions[lineNum++][pos] = '\n';
 	lineNum++;
 	pos = 0;
-	continue;
       }
       
       // Ignore comment starting with // to the end of line
@@ -336,73 +328,8 @@ TokenType getToken(FILE *fp){
     lineNumGlobal = lineNum;
     splitWords();
     printSummary();
-    saveData();
     rewind(fp);
-    /*    int k = 0;
-    for (k = 0; k < lineNum; k++){
-      printf("Tokensinline %d = %d\n", k, tokensInLine[k]);
-      tokensInLineScan[k] = tokensInLine[k];
-    }
-    */
     return EOT; // return token
-}
-
-void saveData(){
-  FILE *f = fopen("scanoutput.txt", "w");
-  if (f == NULL)
-    {
-      printf("Error opening file!\n");
-      exit(1);
-    }
-
-  int i, j;
-  //	int numKeywords = sizeof(keywords) / sizeof(keywords[0]);
-  for (i = 1; i < lineNumGlobal; i++) {
-    for (j = 0; j < tokensInLine[i]; j++) {
-      fprintf(f, "%s\n", linePositions[i][j]);
-    }
-    fprintf(f, "\n");
-  }
-  /* print some text 
-  const char *text = "Write this to the file";
-  fprintf(f, "Some text: %s\n", text);
-  
-  /* print integers and floats 
-  int i = 1;
-  float py = 3.1415927;
-  fprintf(f, "Integer: %d, float: %f\n", i, py);
-  
-  /* printing single chatacters
-  char c = 'A';
-  fprintf(f, "A character: %c\n", c);
-  */
-  //  fprintf("EOF");
-  fclose(f);
-
-  /*  FILE *fp; 
-  char *file; 
-  
-  // File name 
-  file = argv[2]; 
-  
-  if((fp = fopen(file,"r"))== NULL){
-    printf("File does not exist or corrupted.\n");
-    exit(EXIT_FAILURE);
-  }
-  fseek(fp, 0, SEEK_END); // Reset file pointer position -> 0
-  //if(ftell(fp) == 0){
-  //  printf("File is empty.\n");
-  //  exit(EXIT_FAILURE);
-  //}
-  
-  //rewind(fp);
-  
-  TokenType token = UNDEF; 
-  while ((token = getToken(fp)) != EOT) {}
-  
-  fclose(fp);
-  */
-  //  return 0;
 }
 
 int main(int argc, char *argv[]){
@@ -426,12 +353,7 @@ int main(int argc, char *argv[]){
     
     TokenType token = UNDEF; 
     while ((token = getToken(fp)) != EOT) {}
-
-    if (argv[2]){
-      if (!strcmp(argv[2], "y")){
-	parse(linePositions, tokensInLine, lineNumGlobal);
-      }
-    }
+    
     fclose(fp);
     exit(EXIT_SUCCESS); 
     return 0; // Should never reach here

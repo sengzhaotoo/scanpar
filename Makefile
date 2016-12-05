@@ -1,11 +1,15 @@
 CC		= gcc
-PROG	= scan 
+PROG	= scan
 
-$(PROG): scan.o
-	$(CC) -o $(PROG) scan.o
+
+$(PROG): scan.o parser.o
+	$(CC) -o $(PROG) scan.o parser.o
 
 scanner.o : scan.c
-	$(CC) -c scan.c
+	$(CC) -c scan.c 
+
+parser.o : parser.c
+	$(CC) -c parser.c
 
 .PHONY: clean
 
