@@ -12,4 +12,3 @@ void printIdentifiers();
 void printLinePositions();
 void printToken(Token *token);
 void printSummary();
-void saveData();

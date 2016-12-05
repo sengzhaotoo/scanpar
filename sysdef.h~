@@ -20,7 +20,7 @@ int lineNumGlobal = 0;
 
 char *relationalOperators[] = {"==", "<", ">", "!=", "=>", "=<"};
 char otherOperators[8] = {':', '+', '-', '*', '/', '%', '=', '#'};
-char delimiters[11] = {'.', '(', ')', ',', '{', '}', ';', '[', ']', '\"', '\''};
+char delimiters[9] = {'.', '(', ')', ',', '{', '}', ';', '[', ']'};
 
 /* include identifiers, and keywords */
 char words[LIMIT][MAX]; 

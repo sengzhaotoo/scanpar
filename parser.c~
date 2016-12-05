@@ -4,50 +4,53 @@
 #include "ctype.h"
 
 #include "token.h"
+//#include "sysdef.h"
 #include "parse.h"
 
-// Grammar Definitions are now in parse.h
+//Global Variables (gotten from file)
+//int toksInLine[LIMIT];
+//char *lineData[LIMIT][MAXTOKS];
+
+// Grammar Definitions
+
+/*void readData() {
+    FILE *fp; 
+    char *file;
+    int lineNum = 1, pos = 0;
+
+    // File name 
+    file = "scanoutput.txt"; 
+
+    if((fp = fopen(file,"r"))== NULL){
+        printf("File does not exist or corrupted.\n");
+        exit(EXIT_FAILURE);
+    }
+    fseek(fp, 0, SEEK_END); // Reset file pointer position -> 0
+    if(ftell(fp) == 0){
+        printf("File is empty.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    while((c = fgetc(fp)) != EOF){
+      if (c == '\n'){
+	if((d = fgetc(fp) == '\n'){
+	    lineNum++;
+	  } else {
+	    fseek(fp, -1, SEEK_CUR);
+	  }
+	pos = 0;
+      } else if (pos == 0){
+	lineData[lineNum][pos] = c;
+      
+
+	}*/
 
 void parse(char *lineData[LIMIT][MAXTOKS], int tokensInLine[LIMIT], int lineNumGlobal){
-  int k = 0, i = 0;
-  //this was for debugging purposes:
-  //printf("lng = %d\n", lineNumGlobal);
-  //for (k = 1; k < lineNumGlobal; k++){
-    //printf("TokensinlinePARSER %d = %d\n", k, tokensInLine[k]);
-    //printf("fuck = %s\n\n", lineData[k][0]);
+  int k = 0;
+  printf("lng = %d\n", lineNumGlobal);
+  for (k = 0; k < lineNumGlobal; k++){
+    printf("TokensinlinePARSER %d = %d\n", k, tokensInLine[k]);
     //tokensInLineScan[k] = tokensInLine[k];
-  //}
-
-
-  printf("Begin Parsing\n");
-  char *thisLine[MAXTOKS];
-  for (k = 1; k < lineNumGlobal; k++){
-    if(tokensInLine[k] > 3) {
-      //printf("tokens in line %d = %d\n",k, tokensInLine[k]);
-      printf("thisLine = {");
-      for (i = 0; i < tokensInLine[k]; i++){
-	thisLine[i] = lineData[k][i];
-	printf("\"%s\", ", thisLine[i]);
-      }
-      printf("}\n");
-      //Right now, this line /should/ probably have the same format as your array[6] did I THINK. But isAssignment
-      //etc aren't functioning / printing these debugging statements. At least line 8 in test.c should be an assignment!
-      if (isAssignment(thisLine)){
-	printf("assignment\n");
-	if (isExpression(thisLine)){
-	  newExpression(thisLine);
-	  printf("expression\n");
-	}
-	else{
-	  newIdentifier(thisLine);
-	  printf("identifier\n");
-	}
-      }
-      else if (isConditional(thisLine)){
-	newConditional(thisLine);
-	printf("conditional\n");
-	}
-    }
   }
 
 }
