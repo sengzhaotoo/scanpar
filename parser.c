@@ -23,6 +23,7 @@ typedef enum{
 struct identifier{
   string name;  
   type t;
+  int isArray;
 };
 
 struct term{
@@ -42,15 +43,27 @@ struct expression{
   struct operation *op;
 };
 
+struct statement{
+  string cdtlStatement;
+  string condition;
+  struct statement *elses;
+};
+
+struct conditional{
+  struct statement *ifs;
+};
+
 // Function Prototypes
 int isArray(string *arr);
 int isAssignment(string *arr);
 int isExpression(string *arr);
 int isOp(string operator);
+int isConditional(string *arr);
 
 struct expression* newExpression(string *arr);
 struct identifier* newIdentifier(string *arr);
 struct operation* newOperation(string *arr);
+struct conditional* newConditional(string *arr);
 
 // Main Function
 int main(int argc, string argv[]){
@@ -61,8 +74,13 @@ int main(int argc, string argv[]){
     if (isExpression(array)){
       newExpression(array);
     }
+    else{
+      newIdentifier(array);
+    }
   }
-
+  else if (isConditional(array)){
+    newConditional(array);
+  }
 }
 
 //Function definitions
@@ -83,6 +101,10 @@ int isOp(string operator){
   return operator == "+" || operator == "-" || operator == "*" || operator == "/";
 }
 
+int isConditional(char **arr){
+  return arr[0] == "if";
+}
+
 struct expression* newExpression(string *arr){
   struct expression* eq_node = malloc(sizeof(struct expression)); 
   eq_node->eq = equals; 
@@ -91,13 +113,7 @@ struct expression* newExpression(string *arr){
 }
 
 struct identifier* newIdentifier(string *arr){
-  struct identifier* id_node = malloc(sizeof (struct identifier));
-  if (!isArray(arr)){   
-  
-  }
-  else{  
-  
-  } 
+  struct identifier* id_node = malloc(sizeof (struct identifier)); 
   id_node->name = arr[0];
   id_node->t;
 }
@@ -110,6 +126,12 @@ struct operation* newOperation(string *arr){
   op_node->term1 = term_node1;
   op_node->term2 = term_node2;
   term_node1->literal = arr[2];
-  term_node2->literal = arr[4];
-  op_node->term1 = term_node1;  
-}  
+  term_node2->literal = arr[4];  
+}
+
+struct conditional* newConditional(string *arr){
+  struct conditional* cond_node = malloc(sizeof(struct conditional));
+  struct statement* if_node = malloc(sizeof(struct statement));
+  struct statement* else_node = malloc(sizeof(struct statement));  
+}
+ 
