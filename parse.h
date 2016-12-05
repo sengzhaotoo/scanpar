@@ -1,4 +1,5 @@
 #define MAXVARS 20
+#define MAXASSIGNS 20
 
 //Type and struct Definitions
 
@@ -7,22 +8,29 @@ typedef struct variable{
   char *type;
 } variable;
   
-typedef struct assignment{
+typedef struct assignmentToLiteral{
   char *id;
-  char *rightside;
-} assignment;
+  variable *rightside;
+} assignmentToLiteral;
 
 typedef struct binary{
-  char op;
-  char *left;
-  char *right;
+  char *op;
+  char *leftTerm;
+  char *rightTerm;
 } binary;
+
+typedef struct assignmentToBinary{
+  char *id;
+  binary *rightside;
+} assignmentToBinary;
+
+
 
 
 ///////////////////////
 typedef char* string;
 
-typedef enum{
+/*typedef enum{
   equals
 } equals;
 
@@ -30,10 +38,11 @@ typedef enum{
   Int, 
   Float
 } type;
+*/
 
 typedef struct identifier{
-  string name;  
-  type t;
+  char *name;  
+  char *t;
   int isArray;
 } identifier;
 
@@ -41,7 +50,7 @@ typedef struct identifier{
   char equals = '=';
   identifier leftside;
   binary rightside;
-  } assignmentExp;*/
+  } assignmentExp;
 
 
 struct term{
@@ -70,10 +79,10 @@ struct statement{
 struct conditional{
   struct statement *ifs;
 };
-
+*/
 //Global Variables
-identifier *identifiers[MAXVARS];
-assignment *assignments[MAXASSIGNS];
+//identifier *identifiers[MAXVARS];
+//assignment *assignments[MAXASSIGNS];
 
 // Function Prototypes
 int isArray(string *arr, int til);
@@ -83,9 +92,15 @@ int isOp(string operator);
 int isConditional(string *arr);
 void parse(char *lineData[LIMIT][MAXTOKS], int tokensInLine[LIMIT], int lineNumGlobal);
 
-struct expression* newExpression(string *arr);
+struct assignmentToLiteral* newAssignmentToLiteral(string *arr);
+struct variable* newVariable(string *arr);
+struct assignmentToBinary* newAssignmentToBinary(string *arr, int til);
+
+struct binary* newBinary(string *arr, int til);
+
+//struct expression* newExpression(string *arr);
 struct identifier* newIdentifier(string *arr);
-struct operation* newOperation(string *arr);
-struct conditional* newConditional(string *arr);
+//struct operation* newOperation(string *arr);
+//struct conditional* newConditional(string *arr);
 
 
