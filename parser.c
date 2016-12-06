@@ -6,8 +6,10 @@
 #include "token.h"
 #include "parse.h"
 
+int condi = 0;
+
 void parse(char *lineData[LIMIT][MAXTOKS], int tokensInLine[LIMIT], int lineNumGlobal){
-  int k = 0, i = 0, ideni = 0, b = 0;
+  int k = 0, i = 0, y = 0, ideni = 0, b = 0, typechecking = 1;
   //this was for debugging purposes:
   //printf("lng = %d\n", lineNumGlobal);
   //for (k = 1; k < lineNumGlobal; k++){
@@ -23,55 +25,60 @@ void parse(char *lineData[LIMIT][MAXTOKS], int tokensInLine[LIMIT], int lineNumG
   printf("equality = %d\n", strcmp(thisLine[0], "="));
   printf("equality = %d\n", strcmp(thisLine[1], "="));
   */
+
+  for(k = 1; k < lineNumGlobal; k++) {
+    for(i = 0; i < tokensInLine[k]; i++){
+      if(!strcmp(lineData[k][i], ".")) {
+	strcat(lineData[k][i - 1], lineData[k][i]);
+	strcat(lineData[k][i - 1], lineData[k][i + 1]);
+	// lineData[k][i + 1];
+	for(y = i; y < tokensInLine[k] - 2; y++){
+	  lineData[k][y] = lineData[k][y+2];
+	}
+      }
+    }
+  }
+
   for (k = 1; k < lineNumGlobal; k++){
+
+/*    if(typechecking){
+      if((!strcmp(lineData[k][0], "int") || !strcmp(lineData[k][0], "float"))) {
+	
+      }
+      }*/
     if(tokensInLine[k] > 3) {
-      //printf("tokens in line %d = %d\n",k, tokensInLine[k]);
-      //printf("thisLine = {");
+
       for (i = 0; i < tokensInLine[k]; i++){
 	thisLine[i] = lineData[k][i];
-	//	printf("\"%s\", ", thisLine[i]);
-
       }
-      //printf("}\n");
  
       if (isAssignment(thisLine)){
-	printf("assignment\n");
+	//printf("assignment\n");
 	if ((b = isBinary(thisLine, tokensInLine[k])) == 1){
-	  printf("expression\n");
+	  printf("assignment to binary\n");
 	  struct assignmentToBinary* aToB = malloc(sizeof(struct assignmentToBinary));
 	  aToB = newAssignmentToBinary(thisLine, tokensInLine[k]);
 	  printf("id = %s\n op = %s\n leftT = %s\n rightT = %s\n", aToB->id, aToB->rightside->op, aToB->rightside->leftTerm, aToB->rightside->rightTerm);
 	}else if(b >= 2){
-	  printf("multiple binaries\n");
+	  printf("assignment to multiple binaries\n");
 	  struct assignmentToBinaries* aToBs = malloc(sizeof(struct assignmentToBinaries));
 	  aToBs = newAssignmentToBinaries(thisLine, tokensInLine[k]);
-	  printf("id = %s\n op = %s\n leftT = %s\n rightside =\n  op = %s\n  leftT = %s\n,  rightT = %s\n", aToBs->id, aToBs->rightside->op, aToBs->rightside->leftTerm, aToBs->rightside->rightside->op, aToBs->rightside->rightside->leftTerm, aToBs->rightside->rightside->rightTerm);
-
-	  //struct assignmentToBinaries* aToBs
-	  //identifiers[ideni++] = newIdentifier(thisLine);
-	  //printf("identifier %d = %s\n", ideni, identifiers[ideni-1]->name);
+	  printf("id = %s\n op = %s\n leftT = %s\n rightside =\n  op = %s\n  leftT = %s\n  rightT = %s\n", aToBs->id, aToBs->rightside->op, aToBs->rightside->leftTerm, aToBs->rightside->rightside->op, aToBs->rightside->rightside->leftTerm, aToBs->rightside->rightside->rightTerm);
+	} else {
+	  printf("assignment to literal\n");
+	  struct assignmentToLiteral* aToL = malloc(sizeof(struct assignmentToLiteral));
+	  aToL = newAssignmentToLiteral(thisLine);
+	  printf("id = %s\n rightside =\n  name = %s\n  value = %s\n", aToL->id, aToL->rightside->name, aToL->rightside->value);
 	}
       }
-      else if (isConditional(thisLine)){
-        printf("conditional\n");
-        struct conditional* cond = malloc(sizeof(struct conditional));
-        char *nextLine[MAXTOKS];
-        
-        // This takes in the next line of data 
-        for (i = 0; i < tokensInLine[k+1]; i++){
-          nextLine[i] = lineData[k+1][i];
-        }
-
-        cond = newConditional(thisLine, tokensInLine[k], nextLine);
-        if(cond == 1){ // if statement  
-          
-        } else if (cond == 2){ // else statement 
-
-        }
-}
+      else if (isConditional(thisLine, k, tokensInLine[k], lineData, tokensInLine, lineNumGlobal) >= 1){	
+	printf("condition = %s\n  body assignment name = %s\n  body assignment value = %s\n", conditionals[condi].condition, conditionals[condi].body->id, conditionals[condi].body->rightside->value);
+	condi++;
+	k = k + 2;
+      } else {
+      }
     }
   }
-
 }
 
 
@@ -118,14 +125,55 @@ int isOp(string operator){
   return 0;
 }
 
-int isConditional(char **arr, int til){ 
-  if(!strcmp(arr[0],"if") && !strcmp(arr[til], "{")){ // check line start with if and end with {
-    return 1; 
+int isConditional(char **arr, int k, int til, char *lineData[LIMIT][MAXTOKS], int *tokensInLine, int lineNumGlobal){ 
+  int i = 0, t = 0, braceFound = 0, elseStatement = 0, r=0; //looping through lines below this, and through tokens in those lines
+  char *line[MAXTOKS];
+  if(!strcmp(arr[0],"if")){
+    
+     if(!strcmp(arr[til-1], "{")){ // check line start with if and end with {
+       for (t = 2; t < til-2; t++) {
+	 
+	 conditionals[condi].condition = lineData[k][t];
+	 
+       }
+       for (r = 0; r < tokensInLine[k+1]; r++){
+	 line[r] = lineData[k+1][r];
+       }
+
+       conditionals[condi].body = newAssignmentToLiteral(line);       
+
+       for (i = k+1; i < lineNumGlobal - 1; i++) {
+	 for(t=0; t < tokensInLine[i];t++){
+	   if(!strcmp(lineData[i][t], "}")){
+	     braceFound = 1;
+	   }
+	   if(!strcmp(lineData[i][t], "else")){
+	     elseStatement += 1;
+	   }
+	   if(!strcmp(lineData[i][0], "else") && elseStatement){
+	     elseStatement += 1;
+	   }
+	   break;
+	 }
+       }
+       if(braceFound){
+	 if(elseStatement == 1){
+	   //create new ifelse struct
+	   return 3; // 3 means we have a valid else
+	 }
+	 return 2; // 2 means we have a valid brace but no else
+       } else {
+	 
+	 return -1; // means we have no closing brace, error  
+       }
+     } else {
+       return 1;
+     }
   }
-  if(!strcmp(arr[0],"else") && !strcmp(arr[til], "{")){ // check line start with else and end with {
+  /*if(!strcmp(arr[0],"else") && !strcmp(arr[til], "{")){ // check line start with else and end with {
     return 2; 
-  }
-  return 0; // false 
+    }*/
+  return 0; // we have no if 
 }
 /*
 struct expression* newExpression(string *arr){
@@ -145,7 +193,8 @@ struct identifier* newIdentifier(string *arr){
 
 struct variable* newVariable(string *arr){
   struct variable* var_node = malloc(sizeof (struct variable)); 
-  var_node->name = arr[1];
+  var_node->name = arr[0];
+  var_node->value = arr[2];
   var_node->type;
   return var_node;
 }
@@ -153,7 +202,7 @@ struct variable* newVariable(string *arr){
 struct assignmentToLiteral* newAssignmentToLiteral(string *arr) {
   struct assignmentToLiteral* ass_node = malloc(sizeof(struct assignmentToLiteral));
   ass_node->id = arr[0];
-  ass_node->rightside = newVariable(arr + 3);
+  ass_node->rightside = newVariable(arr);
   return ass_node;
 }
 
@@ -217,13 +266,13 @@ struct binaryToBinary* newBinaryToBinary(string *arr, int til, int opsUsed) {
     }*/
   return bi_node;
 }
-
+/*
 struct conditional* newConditional(string *arr, int til, string *arrNext) {
   struct conditional* cond_node = malloc(sizeof(struct conditional));
-  int i = 0;
+  /*int i = 0;
   // if statement 
-  if(isConditional(arr[0]) == 1){
-    if(strcmp(arr[1],"(") && strcmp(arr[til-1],")")) {
+  //if(isConditional(arr[0], ) == 1){
+  //if(strcmp(arr[1],"(") && strcmp(arr[til-1],")")) {
       for(i = 2; i < til-2; i++){ // This grabs everything in between the ()
         cond_node->ifs.condition = arr[i];
       }
@@ -232,10 +281,10 @@ struct conditional* newConditional(string *arr, int til, string *arrNext) {
   } else if (isConditional(arr[0]) == 2){ // else statement
     cond_node->ifs.elses.condition = NULL;
     cond_node->ifs.cdtlStatement = newAssignmentToLiteral(arrNext);
-  }
-  return cond_node;
+    }
+    return cond_node;
 }
-
+*/
 /*
 struct operation* newOperation(string *arr){
   struct operation* op_node = malloc(sizeof(struct operation));
@@ -248,10 +297,8 @@ struct operation* newOperation(string *arr){
   term_node2->literal = arr[4];
   //return 
 }
-
 struct conditional* newConditional(string *arr){
   struct conditional* cond_node = malloc(sizeof(struct conditional));
   struct statement* if_node = malloc(sizeof(struct statement));
   struct statement* else_node = malloc(sizeof(struct statement));  
   }*/
- 

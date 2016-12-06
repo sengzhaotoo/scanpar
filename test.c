@@ -9,6 +9,10 @@ int main(int argc, char *argv[]){
     k = x + y * 3;
     k = ((z + w) / 2) * 3;
 
+    if (0) {
+      k = 3;
+    }
+
     while(i < 10){
         test[i] = i;
         i++;

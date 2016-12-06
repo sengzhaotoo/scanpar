@@ -5,6 +5,7 @@
 
 typedef struct variable{
   char *name;
+  char *value;
   char *type;
 } variable;
 
@@ -68,6 +69,7 @@ typedef enum{
 typedef struct identifier{
   char *name;  
   char *t;
+  char *value;
   int isArray;
 } identifier;
 
@@ -95,32 +97,41 @@ struct expression{
   struct operation *op;
 };
 
-struct statement{
+typedef struct statement{
   string cdtlStatement;
   string condition;
   struct statement *elses;
-};
+} statement;
 
-struct conditional{
+typedef struct conditional{
   struct statement *ifs;
-};
+} conditional;
 */
+
+typedef struct conditional{
+  char *condition; //what's betwen the ()
+  assignmentToLiteral *body; // what's after the if line
+} conditional;
+
+
 //Global Variables
-//identifier *identifiers[MAXVARS];
-//assignment *assignments[MAXASSIGNS];
+//identifier identifiers[MAXVARS];
+//assignmentToBinary assignmentsToBinaries[200];
+conditional conditionals[MAXASSIGNS];
 
 // Function Prototypes
 int isArray(string *arr, int til);
 int isAssignment(string *arr);
 int isExpression(string *arr, int til);
 int isOp(string operator);
-int isConditional(string *arr);
+int isConditional(char **arr, int k, int til, char *lineData[LIMIT][MAXTOKS], int *tokensInLine, int lineNumGlobal);
 void parse(char *lineData[LIMIT][MAXTOKS], int tokensInLine[LIMIT], int lineNumGlobal);
 
 struct assignmentToLiteral* newAssignmentToLiteral(string *arr);
 struct variable* newVariable(string *arr);
 struct assignmentToBinary* newAssignmentToBinary(string *arr, int til);
 struct assignmentToBinaries* newAssignmentToBinaries(string *arr, int til);
+struct conditional* newConditional(string *arr, int til, string *arrNext);
 
 struct binary* newBinary(string *arr, int til);
 struct binaryToBinary* newBinaryToBinary(string *arr, int til, int opsUsed);
