@@ -1,26 +1,27 @@
 # scanpar
 C-like scanner and parser that takes in C file and analyses the file itself. 
 
-### Create executable
-Right now, I am just using gcc scan.c parser.c, as I can't figure out how to make the Makefile do it right
-
+### [Updated] Create Executable
+```
 gcc scan.c parser.c
-
-//OLD
+```
+### [Old] Create Executable
 ``` 
 make 
 ```
-### Run  
-
+### [Update] Run
+#### Scanner Only 
+```
 ./a.out test.c
-to run JUST the scanner
+```
 
+#### Parser & Scanner 
+```
+Note: 'y' signifies yes for parser
 ./a.out test.c y
-to run the PARSER AND the SCANNER
+```
 
-'y' just for like yes I want to parse too please n thank you
-
-//OLD
+### [Old] Run
 ```
 ./scan [insert file name with extensions] 
 ./scan test.c
